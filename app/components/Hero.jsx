@@ -3,8 +3,8 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="mx-auto max-w-6xl px-4 md:px-6 py-12 md:py-20">
-      <div className="grid items-center gap-10 md:grid-cols-2">
+    <section className="mx-auto max-w-6xl px-4 md:px-6 py-10 md:py-20">
+      <div className="grid items-center gap-8 md:gap-10 md:grid-cols-2">
         {/* Left side */}
         <div>
           <div className="mb-4 flex items-center gap-2">
@@ -16,13 +16,13 @@ export default function Hero() {
             <span className="text-sm font-semibold text-emerald-700">Best Healthcare</span>
           </div>
 
-          <h1 className="text-4xl font-bold leading-tight text-zinc-900 md:text-5xl">
+          <h1 className="text-3xl font-bold leading-tight text-zinc-900 sm:text-4xl md:text-5xl">
             Book Appointment
             <br />
             <span className="text-emerald-700">A few Clicks away!</span>
           </h1>
 
-          <p className="mt-5 max-w-xl text-zinc-600">
+          <p className="mt-4 max-w-xl text-zinc-600">
             Connect with doctors, manage appointments, and access your medical records all in one secure platform.
           </p>
 
@@ -43,7 +43,7 @@ export default function Hero() {
             </div>
 
             <div className="flex items-center gap-4">
-              <button className="flex h-12 items-center gap-3 rounded-full bg-emerald-600 px-6 text-white shadow-md hover:bg-emerald-700">
+              <button className="flex h-12 w-full sm:w-auto items-center justify-center gap-3 rounded-full bg-emerald-600 px-6 text-white shadow-md hover:bg-emerald-700">
                 Search
                 <span className="grid h-7 w-7 place-items-center rounded-full bg-white/20">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -56,11 +56,11 @@ export default function Hero() {
         </div>
 
         {/* Right side */}
-        <div className="relative">
+        <div className="relative mt-8 md:mt-0 h-56 sm:h-64 md:h-[360px] rounded-3xl">
 
           {/* Doctor image */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <Image src="/doc.svg" alt="Doctor" width={420} height={320} className="object-contain" />
+            <Image src="/doc.svg" alt="Doctor" width={380} height={300} className="object-contain" />
           </div>
         </div>
       </div>

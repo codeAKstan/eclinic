@@ -1,7 +1,10 @@
-import { Home, Calendar, Users, Package, BarChart3 } from 'lucide-react';
+"use client";
+import { useState } from 'react';
+import { Home, Calendar, Users, Package, BarChart3, Menu, X } from 'lucide-react';
 import LogoutButton from '../components/LogoutButton';
 
 export default function AdminDashboard() {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const sidebarItems = [
     { label: "Dashboard", icon: Home },
     { label: "Appointments", icon: Calendar },
@@ -16,6 +19,15 @@ export default function AdminDashboard() {
       <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
+            {/* Mobile menu toggle */}
+            <button
+              className="-ml-1 inline-flex items-center justify-center rounded-md p-2 text-zinc-700 hover:bg-zinc-100 lg:hidden"
+              aria-label="Open menu"
+              aria-expanded={mobileOpen}
+              onClick={() => setMobileOpen(true)}
+            >
+              <Menu className="h-6 w-6" strokeWidth={1.5} />
+            </button>
             <img src="/logo.svg" alt="E-Clinic" className="h-8 w-8" />
             <span className="text-sm font-semibold text-zinc-900">E-Clinic</span>
           </div>
@@ -29,32 +41,73 @@ export default function AdminDashboard() {
           </div>
         </div>
       </header>
+      {/* Mobile sidebar overlay */}
+      {mobileOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/30"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
+            <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3">
+              <span className="text-sm font-semibold text-zinc-900">Menu</span>
+              <button
+                className="inline-flex items-center justify-center rounded-md p-2 text-zinc-700 hover:bg-zinc-100"
+                aria-label="Close menu"
+                onClick={() => setMobileOpen(false)}
+              >
+                <X className="h-5 w-5" strokeWidth={1.5} />
+              </button>
+            </div>
+            <nav className="space-y-1 p-3">
+              {sidebarItems.map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <a
+                    key={idx}
+                    className={`flex items-center gap-4 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                      idx === 0
+                        ? "bg-zinc-100 text-zinc-900"
+                        : "text-zinc-700 hover:bg-zinc-50"
+                    }`}
+                    href="#"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    <Icon className="h-5 w-5" strokeWidth={1.5} />
+                    {item.label}
+                  </a>
+                );
+              })}
+            </nav>
+          </div>
+        </>
+      )}
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-6 lg:grid-cols-[240px_1fr]">
-        {/* Sidebar */}
-        <aside className="hidden rounded-xl border border-zinc-200 bg-white p-3 lg:block">
-          <nav className="space-y-1">
-            {sidebarItems.map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <a
-                  key={idx}
-                  className={`flex items-center gap-4 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
-                    idx === 0
-                      ? "bg-zinc-100 text-zinc-900"
-                      : "text-zinc-700 hover:bg-zinc-50"
-                  }`}
-                  href="#"
-                >
-                  <Icon className="h-5 w-5" strokeWidth={1.5} />
-                  {item.label}
-                </a>
-              );
-            })}
-          </nav>
-        </aside>
+      {/* Fixed desktop sidebar */}
+      <aside className="hidden lg:block fixed left-0 top-16 bottom-0 z-30 w-60 rounded-none border-r border-zinc-200 bg-white p-3">
+        <nav className="space-y-1">
+          {sidebarItems.map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <a
+                key={idx}
+                className={`flex items-center gap-4 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
+                  idx === 0
+                    ? "bg-zinc-100 text-zinc-900"
+                    : "text-zinc-700 hover:bg-zinc-50"
+                }`}
+                href="#"
+              >
+                <Icon className="h-5 w-5" strokeWidth={1.5} />
+                {item.label}
+              </a>
+            );
+          })}
+        </nav>
+      </aside>
 
-        {/* Main content */}
+      {/* Main content */}
+      <div className="mx-auto max-w-7xl px-4 py-6 lg:pl-64">
         <main>
           <h1 className="text-2xl font-semibold text-zinc-900">Admin Dashboard</h1>
           <p className="mt-1 text-sm text-zinc-600">System overview and management</p>

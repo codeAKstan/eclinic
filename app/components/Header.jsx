@@ -27,7 +27,7 @@ export default function Header() {
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-black/80">
+    <header className="sticky top-0 z-50 w-full border-b border-white bg-white backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         {/* Left: Logo */}
         <Link href="/" className="flex items-center gap-3">
@@ -36,7 +36,7 @@ export default function Header() {
         </Link>
 
         {/* Center: Nav */}
-        <nav className="hidden md:flex items-center gap-6 text-sm text-zinc-600 dark:text-zinc-300">
+        <nav className="hidden md:flex items-center gap-6 text-sm text-black">
           <Link href="#features" className="hover:text-emerald-700">Features</Link>
           <Link href="#services" className="hover:text-emerald-700">Services</Link>
           <Link href="#urgent" className="hover:text-emerald-700">Urgent Care</Link>

@@ -1,15 +1,47 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const nextPath = searchParams.get("next") || "/admin";
 
-  function onSubmit(e) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
+  async function onSubmit(e) {
     e.preventDefault();
-    alert("Login form submitted");
+    setError("");
+    setSuccess(false);
+    setLoading(true);
+    try {
+      const res = await fetch("/api/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        setError(data.error || "Login failed");
+      } else {
+        setSuccess(true);
+        if (data.role === "admin") {
+          router.push(nextPath || "/admin");
+        } else {
+          router.push("/");
+        }
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -38,11 +70,23 @@ export default function LoginPage() {
         </div>
         <button
           type="submit"
-          className="w-full rounded-full bg-emerald-700 px-6 py-3 text-white shadow-md hover:bg-emerald-800"
+          className="w-full rounded-full bg-emerald-700 px-6 py-3 text-white shadow-md hover:bg-emerald-800 disabled:opacity-60"
+          disabled={loading}
         >
-          Sign In
+          {loading ? "Signing In..." : "Sign In"}
         </button>
       </form>
+
+      {error && (
+        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
+      {success && (
+        <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+          Login successful.
+        </div>
+      )}
 
       <div className="mt-4 text-center text-sm">
         <Link href="#" className="text-emerald-700 hover:underline">Forgot your password?</Link>

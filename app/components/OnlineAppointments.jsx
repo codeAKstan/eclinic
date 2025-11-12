@@ -45,7 +45,7 @@ export default function OnlineAppointments() {
           </p>
           <div className="mt-6">
             <Link
-              href="#"
+              href="/signup"
               className="inline-flex items-center gap-3 rounded-full bg-emerald-700 px-6 py-3 text-white shadow-md hover:bg-emerald-800"
             >
               Book Now

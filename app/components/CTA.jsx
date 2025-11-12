@@ -10,7 +10,7 @@ export default function CTA() {
         </p>
         <div className="mt-8">
           <Link
-            href="#"
+            href="/signup"
             className="inline-flex items-center gap-3 rounded-full bg-emerald-600 px-8 py-3 text-white shadow-md hover:bg-emerald-700"
           >
             Get Started

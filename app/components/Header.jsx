@@ -76,15 +76,15 @@ export default function Header() {
               <div className="flex items-center justify-between px-3 py-2">
                 <span className="text-sm font-medium text-zinc-800 dark:text-zinc-100">Patients</span>
                 <div className="flex items-center gap-4">
-                  <Link href="#" className="text-sm text-emerald-600 hover:text-emerald-700">Sign up</Link>
-                  <Link href="#" className="text-sm text-emerald-600 hover:text-emerald-700">Log In</Link>
+                  <Link href="/signup" className="text-sm text-emerald-600 hover:text-emerald-700">Sign up</Link>
+                  <Link href="/login" className="text-sm text-emerald-600 hover:text-emerald-700">Log In</Link>
                 </div>
               </div>
               <div className="my-1 h-px bg-zinc-200 dark:bg-zinc-800" />
               <div className="flex items-center justify-between px-3 py-2">
                 <span className="text-sm font-medium text-zinc-800 dark:text-zinc-100">Doctor</span>
                 <div className="flex items-center gap-4">
-                  <Link href="#" className="text-sm text-emerald-600 hover:text-emerald-700">Log In</Link>
+                  <Link href="/login" className="text-sm text-emerald-600 hover:text-emerald-700">Log In</Link>
                 </div>
               </div>
             </div>

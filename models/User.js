@@ -10,6 +10,11 @@ const UserSchema = new mongoose.Schema(
     primarySpeciality: { type: String, trim: true },
     dateOfBirth: { type: Date },
     gender: { type: String, enum: ["male", "female"] },
+    hospitalCard: {
+      address: { type: String, trim: true },
+      imageUrl: { type: String, trim: true },
+      issuedAt: { type: Date },
+    },
   },
   { timestamps: true }
 );

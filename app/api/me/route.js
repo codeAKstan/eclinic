@@ -22,6 +22,10 @@ export async function GET(request) {
         email: user.email,
         role: user.role,
         name: user.name || "",
+        contactNumber: user.contactNumber || "",
+        gender: user.gender || "",
+        dateOfBirth: user.dateOfBirth || null,
+        hospitalCard: user.hospitalCard || null,
       },
     });
   } catch (err) {

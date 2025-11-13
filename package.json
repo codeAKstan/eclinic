@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@vercel/blob": "^0.24.1",
     "bcryptjs": "^3.0.3",
     "dotenv": "^17.2.3",
     "home": "^2.0.0",

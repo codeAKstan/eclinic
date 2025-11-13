@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export default function LoginPage() {
+function LoginContents() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
@@ -96,5 +96,13 @@ export default function LoginPage() {
         <Link href="/signup" className="text-emerald-700 hover:underline">Sign up</Link>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="mx-auto max-w-md px-4 md:px-6 py-12"><h1 className="text-2xl font-bold text-zinc-900 text-center">Loading...</h1></main>}>
+      <LoginContents />
+    </Suspense>
   );
 }

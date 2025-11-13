@@ -44,7 +44,12 @@ export async function middleware(req: NextRequest) {
       return NextResponse.redirect(url);
     }
     try {
-      await jwtVerify(token, getSecretKey());
+      const { payload } = await jwtVerify(token, getSecretKey());
+      if (payload.role !== "user") {
+        const url = req.nextUrl.clone();
+        url.pathname = payload.role === "admin" ? "/admin" : "/";
+        return NextResponse.redirect(url);
+      }
       return NextResponse.next();
     } catch (e) {
       const url = req.nextUrl.clone();

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import UserTopbar from "../components/UserTopbar";
 import UserSidebar from "../components/UserSidebar";
-import { Home, Calendar, FileText, MessageSquare, Star } from "lucide-react";
+import { Home, Calendar, FileText, MessageSquare, Star, CreditCard } from "lucide-react";
 
 export default function UserDashboardPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -13,6 +13,7 @@ export default function UserDashboardPage() {
     { label: "Appointments", icon: Calendar, href: "/dashboard#appointments" },
     { label: "Medical Records", icon: FileText, href: "/dashboard#records" },
     { label: "Consultations", icon: MessageSquare, href: "/dashboard#consultations" },
+    { label: "Get Card", icon: CreditCard, href: "/dashboard/card" },
   ];
 
   return (

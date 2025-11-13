@@ -34,9 +34,29 @@ export async function middleware(req: NextRequest) {
     }
   }
 
+  // Require auth for user dashboard
+  if (pathname.startsWith("/dashboard")) {
+    const token = req.cookies.get("auth_token")?.value;
+    if (!token) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("next", pathname);
+      return NextResponse.redirect(url);
+    }
+    try {
+      await jwtVerify(token, getSecretKey());
+      return NextResponse.next();
+    } catch (e) {
+      const url = req.nextUrl.clone();
+      url.pathname = "/login";
+      url.searchParams.set("next", pathname);
+      return NextResponse.redirect(url);
+    }
+  }
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/dashboard/:path*"],
 };

@@ -143,23 +143,23 @@ export default function UserCardPage() {
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                   <div>
                     <label className="text-xs text-zinc-500">Name</label>
-                    <input className="mt-1 w-full rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.name || ""} readOnly />
+                    <input className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.name || ""} readOnly />
                   </div>
                   <div>
                     <label className="text-xs text-zinc-500">Email</label>
-                    <input className="mt-1 w-full rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.email || ""} readOnly />
+                    <input className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.email || ""} readOnly />
                   </div>
                   <div>
                     <label className="text-xs text-zinc-500">Contact</label>
-                    <input className="mt-1 w-full rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.contactNumber || ""} readOnly />
+                    <input className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.contactNumber || ""} readOnly />
                   </div>
                   <div>
                     <label className="text-xs text-zinc-500">Gender</label>
-                    <input className="mt-1 w-full rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.gender || ""} readOnly />
+                    <input className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.gender || ""} readOnly />
                   </div>
                   <div>
                     <label className="text-xs text-zinc-500">Date of Birth</label>
-                    <input className="mt-1 w-full rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.dateOfBirth ? new Date(me.dateOfBirth).toLocaleDateString() : ""} readOnly />
+                    <input className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-zinc-100 py-2 px-3 text-sm" value={me?.dateOfBirth ? new Date(me.dateOfBirth).toLocaleDateString() : ""} readOnly />
                   </div>
                 </div>
 
@@ -168,7 +168,7 @@ export default function UserCardPage() {
                   <label className="text-xs text-zinc-500">Address</label>
                   <input
                     type="text"
-                    className="mt-1 w-full rounded-lg border border-zinc-300 bg-white py-2 px-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-emerald-600 focus:outline-none"
+                    className="mt-1 w-full rounded-lg border border-zinc-300 bg-white py-2 px-3 text-sm text-black placeholder:text-black focus:border-emerald-600 focus:outline-none"
                     placeholder="Enter your address"
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
@@ -181,7 +181,7 @@ export default function UserCardPage() {
                     type="file"
                     accept="image/*"
                     onChange={(e) => setImageFile(e.target.files?.[0] || null)}
-                    className="mt-1 w-full rounded-lg border border-zinc-300 bg-white py-2 px-3 text-sm"
+                    className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-white py-2 px-3 text-sm"
                     required
                   />
                 </div>

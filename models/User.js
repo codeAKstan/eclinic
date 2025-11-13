@@ -8,8 +8,20 @@ const UserSchema = new mongoose.Schema(
     name: { type: String, trim: true },
     contactNumber: { type: String, trim: true },
     primarySpeciality: { type: String, trim: true },
+    dateOfBirth: { type: Date },
+    gender: { type: String, enum: ["male", "female"] },
   },
   { timestamps: true }
 );
 
-export default mongoose.models.User || mongoose.model("User", UserSchema);
+// Ensure schema updates are applied during Next.js dev HMR
+if (mongoose.models.User) {
+  try {
+    // Mongoose v6+ provides deleteModel to allow re-compiling models
+    mongoose.deleteModel("User");
+  } catch (e) {
+    // Fallback: ignore if not available
+  }
+}
+
+export default mongoose.model("User", UserSchema);

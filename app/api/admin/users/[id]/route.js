@@ -18,7 +18,7 @@ export async function PATCH(request, { params }) {
     const auth = await requireAdmin(request);
     if (!auth.ok) return auth.res;
     await dbConnect();
-    const id = params.id;
+    const { id } = await params;
     const body = await request.json();
     const { role, name, contactNumber, primarySpeciality } = body || {};
 
@@ -53,7 +53,7 @@ export async function DELETE(request, { params }) {
     const auth = await requireAdmin(request);
     if (!auth.ok) return auth.res;
     await dbConnect();
-    const id = params.id;
+    const { id } = await params;
     const doc = await User.findByIdAndDelete(id);
     if (!doc) return NextResponse.json({ ok: false, error: "User not found" }, { status: 404 });
     return NextResponse.json({ ok: true });

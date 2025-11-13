@@ -8,6 +8,7 @@ export default function SignupPage() {
     firstName: "",
     lastName: "",
     email: "",
+    contactNumber: "",
     password: "",
     confirmPassword: "",
     dobMonth: "",
@@ -17,14 +18,77 @@ export default function SignupPage() {
     terms: false,
   });
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
+
   function update(key, value) {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
-    // Placeholder submit; integrate with backend or auth provider later
-    alert("Signup form submitted");
+    setError("");
+    setSuccess(false);
+    setLoading(true);
+
+    // Basic client validations
+    if (!form.email || !form.password) {
+      setError("Email and password are required");
+      setLoading(false);
+      return;
+    }
+    if (form.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      setLoading(false);
+      return;
+    }
+    if (form.confirmPassword && form.password !== form.confirmPassword) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+    if (!form.terms) {
+      setError("You must accept the terms");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: form.firstName,
+          lastName: form.lastName,
+          email: form.email,
+          contactNumber: form.contactNumber,
+          password: form.password,
+          confirmPassword: form.confirmPassword,
+          terms: form.terms,
+          dobMonth: form.dobMonth,
+          dobDay: form.dobDay,
+          dobYear: form.dobYear,
+          gender: form.gender,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.ok) {
+        setError(data.error || "Signup failed");
+      } else {
+        setSuccess(true);
+        // Optional: clear sensitive fields
+        setForm((f) => ({
+          ...f,
+          password: "",
+          confirmPassword: "",
+        }));
+      }
+    } catch (err) {
+      setError("Network error");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -62,6 +126,17 @@ export default function SignupPage() {
             placeholder="Enter Email"
             value={form.email}
             onChange={(e) => update("email", e.target.value)}
+            className="w-full rounded-lg text-black  border border-zinc-200 bg-white px-4 py-3 outline-none focus:border-emerald-400"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-zinc-700">Contact Phone</label>
+          <input
+            type="tel"
+            placeholder="Enter Phone Number"
+            value={form.contactNumber}
+            onChange={(e) => update("contactNumber", e.target.value)}
             className="w-full rounded-lg text-black  border border-zinc-200 bg-white px-4 py-3 outline-none focus:border-emerald-400"
           />
         </div>
@@ -153,10 +228,22 @@ export default function SignupPage() {
 
         <button
           type="submit"
-          className="w-full rounded-full bg-emerald-600 px-6 py-3 text-white shadow-md hover:bg-emerald-700"
+          className="w-full rounded-full bg-emerald-600 px-6 py-3 text-white shadow-md hover:bg-emerald-700 disabled:opacity-60"
+          disabled={loading}
         >
-          Save and continue
+          {loading ? "Creating Account..." : "Save and continue"}
         </button>
+
+        {error && (
+          <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {error}
+          </div>
+        )}
+        {success && (
+          <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+            Account created. Please check your email and <Link href="/login" className="underline">log in</Link>.
+          </div>
+        )}
       </form>
     </main>
   );

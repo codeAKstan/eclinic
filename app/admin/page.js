@@ -1,46 +1,24 @@
 "use client";
 import { useState } from 'react';
-import { Home, Calendar, Users, Package, BarChart3, Menu, X } from 'lucide-react';
-import LogoutButton from '../components/LogoutButton';
+import { Home, Calendar, Users, Package, BarChart3, X, UserPlus } from 'lucide-react';
+import AdminSidebar from '../components/AdminSidebar';
+import AdminTopbar from '../components/AdminTopbar';
 
 export default function AdminDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const sidebarItems = [
-    { label: "Dashboard", icon: Home },
-    { label: "Appointments", icon: Calendar },
-    { label: "Manage Users", icon: Users },
-    { label: "Inventory", icon: Package },
-    { label: "Reports", icon: BarChart3 },
+    { label: "Dashboard", icon: Home, href: "/admin" },
+    { label: "Appointments", icon: Calendar, href: "/admin#appointments" },
+    { label: "Manage Users", icon: Users, href: "/admin#users" },
+    { label: "Add Doctors", icon: UserPlus, href: "/admin/add-doctor" },
+    { label: "Inventory", icon: Package, href: "/admin#inventory" },
+    { label: "Reports", icon: BarChart3, href: "/admin#reports" },
   ];
 
   return (
     <div className="min-h-screen bg-zinc-50">
       {/* Topbar */}
-      <header className="sticky top-0 z-40 border-b border-zinc-200 bg-white/80 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-2">
-            {/* Mobile menu toggle */}
-            <button
-              className="-ml-1 inline-flex items-center justify-center rounded-md p-2 text-zinc-700 hover:bg-zinc-100 lg:hidden"
-              aria-label="Open menu"
-              aria-expanded={mobileOpen}
-              onClick={() => setMobileOpen(true)}
-            >
-              <Menu className="h-6 w-6" strokeWidth={1.5} />
-            </button>
-            <img src="/logo.svg" alt="E-Clinic" className="h-8 w-8" />
-            <span className="text-sm font-semibold text-zinc-900">E-Clinic</span>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right">
-              <div className="text-sm font-medium text-zinc-900">Admin</div>
-              <div className="text-xs text-zinc-500">admin</div>
-            </div>
-            <div className="h-8 w-8 rounded-full bg-zinc-200" />
-            <LogoutButton />
-          </div>
-        </div>
-      </header>
+      <AdminTopbar onOpenMenu={() => setMobileOpen(true)} mobileOpen={mobileOpen} />
       {/* Mobile sidebar overlay */}
       {mobileOpen && (
         <>
@@ -59,51 +37,14 @@ export default function AdminDashboard() {
                 <X className="h-5 w-5" strokeWidth={1.5} />
               </button>
             </div>
-            <nav className="space-y-1 p-3">
-              {sidebarItems.map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <a
-                    key={idx}
-                    className={`flex items-center gap-4 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
-                      idx === 0
-                        ? "bg-zinc-100 text-zinc-900"
-                        : "text-zinc-700 hover:bg-zinc-50"
-                    }`}
-                    href="#"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    <Icon className="h-5 w-5" strokeWidth={1.5} />
-                    {item.label}
-                  </a>
-                );
-              })}
-            </nav>
+            <AdminSidebar items={sidebarItems} activeIndex={0} onItemClick={() => setMobileOpen(false)} className="space-y-1 p-3" />
           </div>
         </>
       )}
 
       {/* Fixed desktop sidebar */}
       <aside className="hidden lg:block fixed left-0 top-16 bottom-0 z-30 w-60 rounded-none border-r border-zinc-200 bg-white p-3">
-        <nav className="space-y-1">
-          {sidebarItems.map((item, idx) => {
-            const Icon = item.icon;
-            return (
-              <a
-                key={idx}
-                className={`flex items-center gap-4 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${
-                  idx === 0
-                    ? "bg-zinc-100 text-zinc-900"
-                    : "text-zinc-700 hover:bg-zinc-50"
-                }`}
-                href="#"
-              >
-                <Icon className="h-5 w-5" strokeWidth={1.5} />
-                {item.label}
-              </a>
-            );
-          })}
-        </nav>
+        <AdminSidebar items={sidebarItems} activeIndex={0} />
       </aside>
 
       {/* Main content */}

@@ -193,7 +193,7 @@ export default function AppointmentsPage() {
                 <div>
                   <label className="text-sm text-zinc-700">Doctor</label>
                   <select
-                    className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
+                    className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
                     value={selectedDoctorId}
                     onChange={(e) => setSelectedDoctorId(e.target.value)}
                   >
@@ -208,7 +208,7 @@ export default function AppointmentsPage() {
                     <label className="text-sm text-zinc-700">Date</label>
                     <input
                       type="date"
-                      className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
+                      className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
                       value={date}
                       onChange={(e) => setDate(e.target.value)}
                     />
@@ -217,7 +217,7 @@ export default function AppointmentsPage() {
                     <label className="text-sm text-zinc-700">Time</label>
                     <input
                       type="time"
-                      className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
+                      className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
                       value={time}
                       onChange={(e) => setTime(e.target.value)}
                     />
@@ -226,7 +226,7 @@ export default function AppointmentsPage() {
                 <div>
                   <label className="text-sm text-zinc-700">Notes</label>
                   <textarea
-                    className="mt-1 w-full rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
+                    className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm"
                     rows={3}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}

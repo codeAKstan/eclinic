@@ -33,6 +33,8 @@ function LoginContents() {
         setSuccess(true);
         if (data.role === "admin") {
           router.push(nextPath || "/admin");
+        } else if (data.role === "doctor") {
+          router.push("/doctor");
         } else {
           router.push("/dashboard");
         }

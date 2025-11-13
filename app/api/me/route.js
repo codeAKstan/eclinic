@@ -25,6 +25,9 @@ export async function GET(request) {
         contactNumber: user.contactNumber || "",
         gender: user.gender || "",
         dateOfBirth: user.dateOfBirth || null,
+        bloodGroup: user.bloodGroup || "",
+        genotype: user.genotype || "",
+        medicalRecords: user.medicalRecords || [],
         hospitalCard: user.hospitalCard || null,
       },
     });

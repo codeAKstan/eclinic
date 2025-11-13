@@ -10,6 +10,23 @@ const UserSchema = new mongoose.Schema(
     primarySpeciality: { type: String, trim: true },
     dateOfBirth: { type: Date },
     gender: { type: String, enum: ["male", "female"] },
+    bloodGroup: {
+      type: String,
+      enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
+      trim: true,
+    },
+    genotype: {
+      type: String,
+      enum: ["AA", "AS", "SS", "AC", "SC", "CC"],
+      trim: true,
+    },
+    medicalRecords: [
+      {
+        recordType: { type: String, trim: true, required: true },
+        notes: { type: String, trim: true },
+        recordedAt: { type: Date, default: Date.now },
+      },
+    ],
     hospitalCard: {
       address: { type: String, trim: true },
       imageUrl: { type: String, trim: true },

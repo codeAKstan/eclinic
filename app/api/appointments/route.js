@@ -35,6 +35,7 @@ export async function GET(request) {
         } : null,
         scheduledFor: ap.scheduledFor,
         status: ap.status,
+        mode: ap.mode || null,
         notes: ap.notes || "",
       })),
     });

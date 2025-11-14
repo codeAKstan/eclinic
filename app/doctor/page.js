@@ -24,7 +24,7 @@ export default function DoctorDashboardPage() {
 
   const sidebarItems = [
     { label: "Dashboard", icon: Home, href: "/doctor" },
-    { label: "Appointments", icon: Calendar, href: "/doctor#appointments" },
+    { label: "Appointments", icon: Calendar, href: "/doctor/appointments" },
     { label: "Patient Records", icon: Users, href: "/doctor#records" },
     { label: "Consultations", icon: MessageSquare, href: "/doctor#consultations" },
   ];

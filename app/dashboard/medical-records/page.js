@@ -42,7 +42,7 @@ export default function MedicalRecordsPage() {
     { label: "Dashboard", icon: Home, href: "/dashboard" },
     { label: "Appointments", icon: Calendar, href: "/dashboard#appointments" },
     { label: "Medical Records", icon: FileText, href: "/dashboard/medical-records" },
-    { label: "Consultations", icon: MessageSquare, href: "/dashboard#consultations" },
+    { label: "Consultations", icon: MessageSquare, href: "/dashboard/consultations" },
     { label: "Get Card", icon: CreditCard, href: "/dashboard/card" },
   ];
 

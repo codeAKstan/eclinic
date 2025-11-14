@@ -46,7 +46,7 @@ export default function ConsultationsPage() {
     { label: "Consultations", icon: MessageSquare, href: "/dashboard/consultations" },
     { label: "Medical Records", icon: FileText, href: "/dashboard/medical-records" },
     { label: "Card", icon: CreditCard, href: "/dashboard/card" },
-    { label: "Profile", icon: UserRound, href: "/dashboard#profile" },
+    // { label: "Profile", icon: UserRound, href: "/dashboard#profile" },
   ];
 
   function Badge({ status }) {

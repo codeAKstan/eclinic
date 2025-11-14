@@ -1,12 +1,36 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import UserTopbar from "../components/UserTopbar";
 import UserSidebar from "../components/UserSidebar";
 import { Home, Calendar, FileText, MessageSquare, Star, CreditCard } from "lucide-react";
 
 export default function UserDashboardPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [appointments, setAppointments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      setError("");
+      try {
+        const res = await fetch("/api/appointments", { cache: "no-store" });
+        const data = await res.json();
+        if (!cancelled && res.ok && data.ok) {
+          setAppointments(Array.isArray(data.appointments) ? data.appointments : []);
+        }
+      } catch (e) {
+        if (!cancelled) setError("Failed to load appointments");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   const sidebarItems = [
     { label: "Dashboard", icon: Home, href: "/dashboard" },
@@ -37,8 +61,19 @@ export default function UserDashboardPage() {
               <div className="text-sm font-medium text-zinc-900">Upcoming Appointments</div>
               <Calendar className="h-5 w-5 text-zinc-500" />
             </div>
-            <div className="mt-3 text-3xl font-semibold">2</div>
-            <div className="mt-1 text-xs text-zinc-500">Next: Dec 15, 2:00 PM</div>
+            {(() => {
+              const upcoming = appointments.filter(ap => ["scheduled", "approved", "rescheduled"].includes(ap.status));
+              const next = upcoming
+                .filter(ap => ap.scheduledFor)
+                .sort((a, b) => new Date(a.scheduledFor) - new Date(b.scheduledFor))[0];
+              const nextText = next ? new Date(next.scheduledFor).toLocaleString() : "No upcoming";
+              return (
+                <>
+                  <div className="mt-3 text-3xl font-semibold">{loading ? "—" : upcoming.length}</div>
+                  <div className="mt-1 text-xs text-zinc-500">{loading ? "Loading" : `Next: ${nextText}`}</div>
+                </>
+              );
+            })()}
           </div>
 
           <div className="rounded-xl border border-zinc-200 bg-white p-4">
@@ -46,8 +81,15 @@ export default function UserDashboardPage() {
               <div className="text-sm font-medium text-zinc-900">Past Consultations</div>
               <MessageSquare className="h-5 w-5 text-zinc-500" />
             </div>
-            <div className="mt-3 text-3xl font-semibold">8</div>
-            <div className="mt-1 text-xs text-zinc-500">Completed successfully</div>
+            {(() => {
+              const past = appointments.filter(ap => ap.status === "completed");
+              return (
+                <>
+                  <div className="mt-3 text-3xl font-semibold">{loading ? "—" : past.length}</div>
+                  <div className="mt-1 text-xs text-zinc-500">{loading ? "Loading" : "Completed successfully"}</div>
+                </>
+              );
+            })()}
           </div>
 
           <div className="rounded-xl border border-zinc-200 bg-white p-4">
@@ -55,8 +97,8 @@ export default function UserDashboardPage() {
               <div className="text-sm font-medium text-zinc-900">Health Score</div>
               <Star className="h-5 w-5 text-zinc-500" />
             </div>
-            <div className="mt-3 text-3xl font-semibold">85%</div>
-            <div className="mt-1 text-xs text-zinc-500">Good condition</div>
+            <div className="mt-3 text-3xl font-semibold">—</div>
+            <div className="mt-1 text-xs text-zinc-500">Coming soon</div>
           </div>
         </div>
 
@@ -64,21 +106,42 @@ export default function UserDashboardPage() {
         <div className="mt-8">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold text-zinc-900">Upcoming Appointments</h2>
-            <button className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">+ Book Appointment</button>
+            <a href="/dashboard/appointments" className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">+ Book Appointment</a>
           </div>
           <div className="mt-4 rounded-xl border border-zinc-200 bg-white p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="font-medium text-zinc-900">Dr. Sarah Smith</div>
-                <div className="text-sm text-zinc-600">General Checkup</div>
+            {loading ? (
+              <div className="text-sm text-zinc-600">Loading appointments…</div>
+            ) : error ? (
+              <div className="text-sm text-red-600">{error}</div>
+            ) : (
+              <div className="space-y-4">
+                {appointments.filter(ap => ["scheduled", "approved", "rescheduled"].includes(ap.status)).length === 0 ? (
+                  <div className="text-sm text-zinc-600">No upcoming appointments</div>
+                ) : (
+                  appointments
+                    .filter(ap => ["scheduled", "approved", "rescheduled"].includes(ap.status))
+                    .sort((a, b) => new Date(a.scheduledFor) - new Date(b.scheduledFor))
+                    .slice(0, 3)
+                    .map((ap) => {
+                      const dt = new Date(ap.scheduledFor);
+                      const time = dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+                      const date = dt.toLocaleDateString();
+                      return (
+                        <div key={ap.id} className="flex items-center justify-between">
+                          <div>
+                            <div className="font-medium text-zinc-900">{ap.doctor?.name || "Doctor"}</div>
+                            <div className="text-sm text-zinc-600">{ap.doctor?.speciality || "Consultation"}</div>
+                          </div>
+                          <div className="text-right">
+                            <div className="text-xs text-zinc-500">{date} • {time}</div>
+                            <a href="/dashboard/consultations" className="mt-2 inline-block rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50">View</a>
+                          </div>
+                        </div>
+                      );
+                    })
+                )}
               </div>
-              <button className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50">Join Now</button>
-            </div>
-            <div className="mt-2 flex items-center gap-4 text-xs text-zinc-500">
-              <span>Dec 15, 2024</span>
-              <span>2:00 PM</span>
-              <span className="rounded bg-emerald-50 px-2 py-0.5 text-emerald-700">confirmed</span>
-            </div>
+            )}
           </div>
         </div>
 
@@ -86,21 +149,32 @@ export default function UserDashboardPage() {
         <div className="mt-8" id="consultations">
           <h2 className="text-lg font-semibold text-zinc-900">Consultation History</h2>
           <div className="mt-4 space-y-3">
-            {[1,2,3].map((i) => (
-              <div key={i} className="rounded-xl border border-zinc-200 bg-white p-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <div className="font-medium text-zinc-900">Dr. Sarah Smith</div>
-                    <div className="text-sm text-zinc-600">Regular checkup - vitals normal</div>
-                  </div>
-                  <button className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50">Leave Feedback</button>
-                </div>
-                <div className="mt-2 flex items-center gap-4 text-xs text-zinc-500">
-                  <span>Nov 30, 2024</span>
-                  <span className="rounded bg-emerald-50 px-2 py-0.5 text-emerald-700">completed</span>
-                </div>
-              </div>
-            ))}
+            {loading ? (
+              <div className="text-sm text-zinc-600">Loading consultations…</div>
+            ) : (
+              appointments
+                .filter(ap => ap.status === "completed")
+                .sort((a, b) => new Date(b.scheduledFor) - new Date(a.scheduledFor))
+                .slice(0, 5)
+                .map((ap) => {
+                  const dt = new Date(ap.scheduledFor);
+                  return (
+                    <div key={ap.id} className="rounded-xl border border-zinc-200 bg-white p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium text-zinc-900">{ap.doctor?.name || "Doctor"}</div>
+                          <div className="text-sm text-zinc-600">{ap.notes || ap.doctor?.speciality || "Consultation"}</div>
+                        </div>
+                        <a href="/dashboard/consultations" className="rounded-lg border border-zinc-200 px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50">Leave Feedback</a>
+                      </div>
+                      <div className="mt-2 flex items-center gap-4 text-xs text-zinc-500">
+                        <span>{dt.toLocaleDateString()}</span>
+                        <span className="rounded bg-emerald-50 px-2 py-0.5 text-emerald-700">completed</span>
+                      </div>
+                    </div>
+                  );
+                })
+            )}
           </div>
         </div>
       </div>

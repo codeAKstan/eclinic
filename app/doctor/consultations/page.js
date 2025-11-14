@@ -136,6 +136,7 @@ export default function DoctorConsultationsPage() {
                   const isToday = isSameDay(dt, new Date());
                   const typeText = ap.mode === "online" ? "Video" : "Physical";
                   const canStart = ap.mode === "online" && ap.status === "approved" && isToday;
+                  const canOpenForm = ap.status === "approved" && isToday;
                   return (
                     <tr key={ap.id} className="border-b border-zinc-100 last:border-b-0">
                       <td className="px-5 py-3">{ap.patient?.name || "—"}</td>
@@ -155,7 +156,9 @@ export default function DoctorConsultationsPage() {
                             </button>
                           )}
                           <button
-                            className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50"
+                            className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
+                            disabled={!canOpenForm}
+                            title={canOpenForm ? "Open consultation form" : "Available on meeting day when approved"}
                             onClick={() => openForm(ap)}
                           >
                             <CheckCircle className="h-4 w-4 text-green-600" /> Consultation Form

@@ -18,8 +18,6 @@ export default function DoctorConsultationsPage() {
   const [diagnosis, setDiagnosis] = useState("");
   const [prescription, setPrescription] = useState("");
   const [advice, setAdvice] = useState("");
-  const [followUpDate, setFollowUpDate] = useState("");
-  const [files, setFiles] = useState([]);
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
 
@@ -63,8 +61,6 @@ export default function DoctorConsultationsPage() {
     setDiagnosis("");
     setPrescription("");
     setAdvice("");
-    setFollowUpDate("");
-    setFiles([]);
     setCompleted(false);
     setFormOpen(true);
   }
@@ -79,9 +75,7 @@ export default function DoctorConsultationsPage() {
       form.append("diagnosis", diagnosis);
       form.append("prescription", prescription);
       form.append("advice", advice);
-      if (followUpDate) form.append("followUpDate", followUpDate);
       form.append("completed", completed ? "true" : "false");
-      for (const f of files) form.append("files", f);
       const res = await fetch("/api/consultations", { method: "POST", body: form });
       const data = await res.json();
       if (!res.ok || !data.ok) {
@@ -198,16 +192,7 @@ export default function DoctorConsultationsPage() {
                   <label className="text-sm text-zinc-700">Advice</label>
                   <textarea className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm" rows={3} value={advice} onChange={(e) => setAdvice(e.target.value)} />
                 </div>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className="text-sm text-zinc-700">Follow-up Date</label>
-                    <input type="date" className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm" value={followUpDate} onChange={(e) => setFollowUpDate(e.target.value)} />
-                  </div>
-                  <div>
-                    <label className="text-sm text-zinc-700">Upload Files</label>
-                    <input type="file" multiple className="mt-1 w-full text-black rounded-lg border border-zinc-300 bg-white px-3 py-2 text-sm" onChange={(e) => setFiles(Array.from(e.target.files || []))} />
-                  </div>
-                </div>
+                {/* Removed Follow-up Date and Upload Files fields as requested */}
                 <div className="flex items-center gap-2">
                   <input id="completed" type="checkbox" checked={completed} onChange={(e) => setCompleted(e.target.checked)} />
                   <label htmlFor="completed" className="text-sm text-zinc-700">Consultation Completed</label>

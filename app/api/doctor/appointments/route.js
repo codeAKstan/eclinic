@@ -41,6 +41,15 @@ export async function GET(request) {
         status: ap.status,
         mode: ap.mode || null,
         notes: ap.notes || "",
+        feedback: ap.feedback ? {
+          rating: ap.feedback.rating ?? null,
+          comments: ap.feedback.comments || "",
+          createdAt: ap.feedback.createdAt || null,
+        } : null,
+        consultation: ap.consultation ? {
+          completed: !!ap.consultation.completed,
+          updatedAt: ap.consultation.updatedAt || null,
+        } : null,
       })),
     });
   } catch (err) {

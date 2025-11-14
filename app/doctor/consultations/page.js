@@ -51,8 +51,8 @@ export default function DoctorConsultationsPage() {
   const sidebarItems = useMemo(() => ([
     { label: "Dashboard", icon: Home, href: "/doctor" },
     { label: "Appointments", icon: Calendar, href: "/doctor/appointments" },
-    { label: "Consultations", icon: MessageSquare, href: "/doctor/consultations" },
     { label: "Patient Records", icon: Users, href: "/doctor/patients" },
+    { label: "Consultations", icon: MessageSquare, href: "/doctor/consultations" },
   ]), []);
 
   function openForm(ap) {

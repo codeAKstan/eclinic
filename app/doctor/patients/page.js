@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import DoctorTopbar from "../../components/DoctorTopbar";
 import DoctorSidebar from "../../components/DoctorSidebar";
-import { Home, Calendar, Users } from "lucide-react";
+import { Home, Calendar, Users, MessageSquare } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function DoctorPatientsIndexPage() {
@@ -38,22 +38,24 @@ export default function DoctorPatientsIndexPage() {
     { label: "Dashboard", icon: Home, href: "/doctor" },
     { label: "Appointments", icon: Calendar, href: "/doctor/appointments" },
     { label: "Patient Records", icon: Users, href: "/doctor/patients" },
+    {label: "Consultations", icon: MessageSquare, href: "/doctor/consultations"}
   ]), []);
 
   const patients = useMemo(() => {
     const map = new Map();
     for (const ap of appointments) {
+      const pId = ap.patientId;
       const p = ap.patient;
-      if (!p || !p.id) continue;
-      if (!map.has(p.id)) {
-        map.set(p.id, { id: p.id, name: p.name || "—", email: p.email || "", contactNumber: p.contactNumber || "", upcoming: null });
+      if (!pId) continue;
+      if (!map.has(pId)) {
+        map.set(pId, { id: pId, name: (p && p.name) || "—", email: (p && p.email) || "", contactNumber: (p && p.contactNumber) || "", upcoming: null });
       }
       // track earliest upcoming approved appointment
       try {
         const dt = new Date(ap.scheduledFor);
-        const curr = map.get(p.id).upcoming;
+        const curr = map.get(pId).upcoming;
         if (ap.status === "approved" && (!curr || dt < curr)) {
-          map.get(p.id).upcoming = dt;
+          map.get(pId).upcoming = dt;
         }
       } catch {}
     }

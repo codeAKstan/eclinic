@@ -1,17 +1,74 @@
 "use client";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Home, Calendar, Users, Package, BarChart3, X, UserPlus } from 'lucide-react';
 import AdminSidebar from '../components/AdminSidebar';
 import AdminTopbar from '../components/AdminTopbar';
 
 export default function AdminDashboard() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [users, setUsers] = useState([]);
+  const [appointments, setAppointments] = useState([]);
+  const [medicines, setMedicines] = useState([]);
+
+  useEffect(() => {
+    let mounted = true;
+    async function fetchData() {
+      try {
+        setLoading(true);
+        setError("");
+        const [uRes, aRes, mRes] = await Promise.all([
+          fetch('/api/admin/users', { cache: 'no-store', credentials: 'include' }),
+          fetch('/api/admin/appointments', { cache: 'no-store', credentials: 'include' }),
+          fetch('/api/admin/inventory', { cache: 'no-store', credentials: 'include' }),
+        ]);
+
+        const uJson = await uRes.json();
+        const aJson = await aRes.json();
+        const mJson = await mRes.json();
+
+        if (!uJson.ok) throw new Error(uJson.error || 'Failed to load users');
+        if (!aJson.ok) throw new Error(aJson.error || 'Failed to load appointments');
+        if (!mJson.ok) throw new Error(mJson.error || 'Failed to load inventory');
+
+        if (!mounted) return;
+        setUsers(uJson.users || []);
+        setAppointments(aJson.appointments || []);
+        setMedicines(mJson.medicines || []);
+      } catch (e) {
+        console.error('Admin dashboard load error', e);
+        if (!mounted) return;
+        setError(e.message || 'Failed to load data');
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+    fetchData();
+    return () => { mounted = false; };
+  }, []);
+
+  const totalUsers = users.length;
+  const activeDoctors = users.filter(u => u.role === 'doctor').length;
+  const totalStudents = users.filter(u => u.role === 'user').length;
+  const totalAppointments = appointments.length;
+  const completedAppointments = appointments.filter(a => a.status === 'completed').length;
+
+  function formatDateTime(dt) {
+    if (!dt) return '';
+    try {
+      const d = new Date(dt);
+      return d.toLocaleString(undefined, { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+    } catch {
+      return String(dt);
+    }
+  }
   const sidebarItems = [
     { label: "Dashboard", icon: Home, href: "/admin" },
-    { label: "Appointments", icon: Calendar, href: "/admin#appointments" },
+    { label: "Appointments", icon: Calendar, href: "/admin/appointments" },
     { label: "Manage Users", icon: Users, href: "/admin/manage-users" },
     { label: "Add Doctors", icon: UserPlus, href: "/admin/add-doctor" },
-    { label: "Inventory", icon: Package, href: "/admin#inventory" },
+    { label: "Inventory", icon: Package, href: "/admin/inventory" },
     { label: "Reports", icon: BarChart3, href: "/admin#reports" },
   ];
 
@@ -56,10 +113,10 @@ export default function AdminDashboard() {
           {/* Stats */}
           <section className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { title: "Total Users", value: "1,240", note: "+12% this month" },
-              { title: "Active Doctors", value: "45", note: "28 available today" },
-              { title: "Total Students", value: "890", note: "156 new this month" },
-              { title: "Appointments", value: "3,250", note: "2,890 completed" },
+              { title: "Total Users", value: loading ? "…" : String(totalUsers), note: loading ? "Loading" : `${activeDoctors} doctors` },
+              { title: "Active Doctors", value: loading ? "…" : String(activeDoctors), note: loading ? "Loading" : `${activeDoctors} active` },
+              { title: "Total Students", value: loading ? "…" : String(totalStudents), note: loading ? "Loading" : `${totalStudents} registered` },
+              { title: "Appointments", value: loading ? "…" : String(totalAppointments), note: loading ? "Loading" : `${completedAppointments} completed` },
             ].map((card, i) => (
               <div key={i} className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
                 <div className="flex items-center justify-between">
@@ -74,11 +131,11 @@ export default function AdminDashboard() {
             ))}
           </section>
 
-          {/* All Appointments */}
+          {/* All Appointments (Live) */}
           <section className="mt-6 rounded-xl border border-zinc-200 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-3">
               <h2 className="text-sm font-semibold text-zinc-900">All Appointments</h2>
-              <button className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50">View All</button>
+              <button onClick={() => (window.location.href = '/admin/appointments')} className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50">View All</button>
             </div>
             <div className="overflow-x-auto">
               <table className="min-w-full divide-y divide-zinc-200 text-sm">
@@ -98,60 +155,82 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 bg-white">
-                  {[
-                    ["Dr. Sarah Smith", "Alex Johnson", "Dec 15 - 2:00 PM", "Scheduled"],
-                    ["Dr. John Doe", "Emily Brown", "Dec 14 - 4:30 PM", "Completed"],
-                    ["Dr. Sarah Smith", "Michael Chen", "Dec 10 - 10:30 AM", "Scheduled"],
-                    ["Dr. Emily Wilson", "Jessica Lee", "Dec 7 - 3:00 PM", "Scheduled"],
-                  ].map((row, i) => (
-                    <tr key={i}>
-                      <td className="px-5 py-2 text-zinc-900">{row[0]}</td>
-                      <td className="px-5 py-2 text-zinc-900">{row[1]}</td>
-                      <td className="px-5 py-2 text-zinc-900">{row[2]}</td>
+                  {(loading ? [] : appointments.slice(0, 8)).map((a) => (
+                    <tr key={a.id}>
+                      <td className="px-5 py-2 text-zinc-900">{a.doctor?.name || '—'}</td>
+                      <td className="px-5 py-2 text-zinc-900">{a.user?.name || a.user?.email || '—'}</td>
+                      <td className="px-5 py-2 text-zinc-900">{formatDateTime(a.scheduledFor)}</td>
                       <td className="px-5 py-2">
                         <span
                           className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs ${
-                            row[3] === "Completed"
-                              ? "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200"
-                              : "bg-blue-50 text-blue-700 ring-1 ring-blue-200"
+                            a.status === 'completed'
+                              ? 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200'
+                              : a.status === 'cancelled'
+                              ? 'bg-red-50 text-red-700 ring-1 ring-red-200'
+                              : 'bg-blue-50 text-blue-700 ring-1 ring-blue-200'
                           }`}
                         >
-                          {row[3]}
+                          {a.status}
                         </span>
                       </td>
                       <td className="px-5 py-2">
-                        <button className="text-xs font-medium text-emerald-700 hover:underline">Edit</button>
+                        <button className="text-xs font-medium text-emerald-700 hover:underline">View</button>
                       </td>
                     </tr>
                   ))}
+                  {(!loading && appointments.length === 0) && (
+                    <tr>
+                      <td colSpan={5} className="px-5 py-4 text-center text-zinc-500">No appointments found</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
+              {loading && (
+                <div className="px-5 py-3 text-sm text-zinc-500">Loading appointments…</div>
+              )}
+              {error && (
+                <div className="px-5 py-3 text-sm text-red-600">{error}</div>
+              )}
             </div>
           </section>
 
-          {/* Medicine Inventory */}
+          {/* Medicine Inventory (Live) */}
           <section className="mt-6">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-sm font-semibold text-zinc-900">Medicine Inventory</h2>
-              <button className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs text-white shadow hover:bg-emerald-700">+ Add Medicine</button>
+              <button onClick={() => (window.location.href = '/admin/inventory')} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs text-white shadow hover:bg-emerald-700">+ Add Medicine</button>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {/* Card */}
-              <InventoryCard name="Paracetamol" stockLabel="Stock: 450 tablets" threshold="Threshold: 100 tablets" progress={80} />
-              <InventoryCard name="Antibiotics (Amoxicillin)" stockLabel="Stock: 120 tablets" threshold="Threshold: 200 tablets" progress={40} variant="alert" />
-              <InventoryCard name="Vitamin C" stockLabel="Stock: 800 tablets" threshold="Threshold: 300 tablets" progress={90} />
-              <InventoryCard name="Bandages" stockLabel="Stock: 45 boxes" threshold="Threshold: 100 boxes" progress={30} variant="alert" />
-              <InventoryCard name="Syringes" stockLabel="Stock: 250 units" threshold="Threshold: 150 units" progress={55} />
+              {(loading ? [] : medicines.slice(0, 6)).map((m) => {
+                const threshold = Number(m.threshold) || 0;
+                const stock = Number(m.stock) || 0;
+                const progress = threshold > 0 ? Math.min(100, Math.round((stock / threshold) * 100)) : 100;
+                const isAlert = threshold > 0 && stock < threshold;
+                const unit = m.form ? m.form.toLowerCase() : 'units';
+                return (
+                  <InventoryCard
+                    key={m.id}
+                    name={m.name}
+                    stockLabel={`Stock: ${stock} ${unit}`}
+                    threshold={`Threshold: ${threshold} ${unit}`}
+                    progress={progress}
+                    variant={isAlert ? 'alert' : undefined}
+                  />
+                );
+              })}
+              {(!loading && medicines.length === 0) && (
+                <div className="rounded-xl border border-zinc-200 bg-white p-5 text-sm text-zinc-500">No medicines found</div>
+              )}
             </div>
           </section>
 
-          {/* User Management */}
+          {/* User Management (Live) */}
           <section className="mt-6 rounded-xl border border-zinc-200 bg-white shadow-sm">
             <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-3">
               <h2 className="text-sm font-semibold text-zinc-900">User Management</h2>
               <div className="flex items-center gap-2">
-                <button className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs text-white shadow hover:bg-emerald-700">+ Add User</button>
-                <button className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50">Manage Users</button>
+                <button onClick={() => (window.location.href = '/admin/add-doctor')} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs text-white shadow hover:bg-emerald-700">+ Add User</button>
+                <button onClick={() => (window.location.href = '/admin/manage-users')} className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50">Manage Users</button>
               </div>
             </div>
             <div className="overflow-x-auto">
@@ -164,32 +243,39 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-zinc-200 bg-white">
-                  {[
-                    ["Dr. James Wilson", "Doctor", "james@clinic.com", "Dec 1, 2024"],
-                    ["Lisa Rodriguez", "Student", "lisa@student.com", "Dec 5, 2024"],
-                    ["Dr. Robert Brown", "Doctor", "robert@clinic.com", "Nov 28, 2024"],
-                  ].map((row, i) => (
-                    <tr key={i}>
-                      <td className="px-5 py-2 text-zinc-900">{row[0]}</td>
+                  {(loading ? [] : users.slice(0, 8)).map((u) => (
+                    <tr key={u.id}>
+                      <td className="px-5 py-2 text-zinc-900">{u.name || '—'}</td>
                       <td className="px-5 py-2">
-                        <span className="text-xs font-medium text-blue-700">{row[1]}</span>
+                        <span className="text-xs font-medium text-blue-700">{u.role === 'doctor' ? 'Doctor' : u.role === 'admin' ? 'Admin' : 'User'}</span>
                       </td>
-                      <td className="px-5 py-2 text-zinc-900">{row[2]}</td>
-                      <td className="px-5 py-2 text-zinc-900">{row[3]}</td>
+                      <td className="px-5 py-2 text-zinc-900">{u.email}</td>
+                      <td className="px-5 py-2 text-zinc-900">{formatDateTime(u.createdAt)}</td>
                       <td className="px-5 py-2">
                         <div className="flex items-center gap-3">
-                          <button className="text-xs font-medium text-emerald-700 hover:underline">Edit</button>
+                          <button className="text-xs font-medium text-emerald-700 hover:underline">View</button>
                           <button className="text-xs font-medium text-red-700 hover:underline">Remove</button>
                         </div>
                       </td>
                     </tr>
                   ))}
+                  {(!loading && users.length === 0) && (
+                    <tr>
+                      <td colSpan={5} className="px-5 py-4 text-center text-zinc-500">No users found</td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
+              {loading && (
+                <div className="px-5 py-3 text-sm text-zinc-500">Loading users…</div>
+              )}
+              {error && (
+                <div className="px-5 py-3 text-sm text-red-600">{error}</div>
+              )}
             </div>
           </section>
 
-          {/* System Analytics */}
+          {/* System Analytics (Placeholder) */}
           <section className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-2">
             <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
               <h3 className="text-sm font-semibold text-zinc-900">Appointment Trends</h3>
@@ -202,9 +288,9 @@ export default function AdminDashboard() {
             <div className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
               <h3 className="text-sm font-semibold text-zinc-900">User Distribution</h3>
               <div className="mt-4 space-y-4 text-sm">
-                <Progress label="Students" value={890} max={1220} color="emerald" suffix="(72%)" />
-                <Progress label="Doctors" value={45} max={1220} color="blue" suffix="(3.6%)" />
-                <Progress label="Admins" value={10} max={1220} color="purple" suffix="(0.8%)" />
+                <Progress label="Users" value={totalUsers || 0} max={Math.max(1, totalUsers)} color="emerald" suffix={`(${totalUsers ? '100%' : '0%'})`} />
+                <Progress label="Doctors" value={activeDoctors || 0} max={Math.max(1, totalUsers)} color="blue" />
+                <Progress label="Admins" value={users.filter(u => u.role === 'admin').length || 0} max={Math.max(1, totalUsers)} color="purple" />
               </div>
             </div>
           </section>

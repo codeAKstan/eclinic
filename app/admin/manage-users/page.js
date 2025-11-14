@@ -29,10 +29,10 @@ export default function ManageUsersPage() {
 
   const sidebarItems = [
     { label: "Dashboard", icon: Home, href: "/admin" },
-    { label: "Appointments", icon: Calendar, href: "/admin#appointments" },
+    { label: "Appointments", icon: Calendar, href: "/admin/appointments" },
     { label: "Manage Users", icon: Users, href: "/admin/manage-users" },
     { label: "Add Doctors", icon: UserPlus, href: "/admin/add-doctor" },
-    { label: "Inventory", icon: Package, href: "/admin#inventory" },
+    { label: "Inventory", icon: Package, href: "/admin/inventory" },
     { label: "Reports", icon: BarChart3, href: "/admin#reports" },
   ];
 

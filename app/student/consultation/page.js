@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function ConsultationRoomPage() {
+function ConsultationRoomInner() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [roomInput, setRoomInput] = useState("");
@@ -61,5 +61,13 @@ export default function ConsultationRoomPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ConsultationRoomPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-sm text-zinc-600">Loading consultation room…</div>}>
+      <ConsultationRoomInner />
+    </Suspense>
   );
 }

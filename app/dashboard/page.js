@@ -45,6 +45,29 @@ export default function UserDashboardPage() {
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-white">
       <UserTopbar onOpenMenu={() => setMobileOpen(true)} mobileOpen={mobileOpen} />
 
+      {/* Mobile sidebar overlay */}
+      {mobileOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-40 bg-black/30"
+            onClick={() => setMobileOpen(false)}
+          />
+          <div className="fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg">
+            <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-3">
+              <span className="text-sm font-semibold text-zinc-900">Menu</span>
+              <button
+                className="inline-flex items-center justify-center rounded-md p-2 text-zinc-700 hover:bg-zinc-100"
+                aria-label="Close menu"
+                onClick={() => setMobileOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            <UserSidebar items={sidebarItems} activeIndex={0} onItemClick={() => setMobileOpen(false)} className="space-y-1 p-3" />
+          </div>
+        </>
+      )}
+
       {/* Sidebar */}
       <aside className="hidden lg:block fixed left-0 top-16 bottom-0 z-30 w-60 border-r border-zinc-200 bg-white p-3">
         <UserSidebar items={sidebarItems} activeIndex={0} />

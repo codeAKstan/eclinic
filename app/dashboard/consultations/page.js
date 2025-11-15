@@ -138,7 +138,7 @@ export default function ConsultationsPage() {
           <p className="mt-1 text-sm text-zinc-600">Manage and track all your medical appointments</p>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+        <div className="mt-6 overflow-x-auto rounded-2xl border border-zinc-200 bg-white">
           {loading ? (
             <div className="px-5 py-6 text-sm text-zinc-500">Loading consultations…</div>
           ) : error ? (
@@ -146,7 +146,7 @@ export default function ConsultationsPage() {
           ) : appointments.length === 0 ? (
             <div className="px-5 py-6 text-sm text-zinc-500">No consultations yet</div>
           ) : (
-            <table className="w-full text-left">
+            <table className="min-w-[700px] text-left">
               <thead className="border-b border-zinc-200 text-xs text-zinc-500">
                 <tr>
                   <th className="px-5 py-3">Doctor</th>

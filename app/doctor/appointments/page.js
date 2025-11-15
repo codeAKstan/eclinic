@@ -216,7 +216,7 @@ export default function DoctorAppointmentsPage() {
         </div>
 
         {/* List */}
-        <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
+        <div className="mt-6 overflow-x-auto rounded-2xl border border-zinc-200 bg-white">
           {loading ? (
             <div className="px-5 py-6 text-sm text-zinc-500">Loading appointments…</div>
           ) : error ? (
@@ -224,7 +224,7 @@ export default function DoctorAppointmentsPage() {
           ) : filtered.length === 0 ? (
             <div className="px-5 py-6 text-sm text-zinc-500">No appointments found</div>
           ) : (
-            <table className="w-full text-left">
+            <table className="min-w-[700px] text-left">
               <thead className="border-b border-zinc-200 text-xs text-zinc-500">
                 <tr>
                   <th className="px-5 py-3">Patient</th>

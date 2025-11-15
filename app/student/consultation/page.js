@@ -19,6 +19,11 @@ function ConsultationRoomInner() {
     return (r && r.trim()) ? r.trim() : "user";
   }, [searchParams]);
 
+  const provider = useMemo(() => {
+    const p = searchParams.get("provider");
+    return (p && p.trim()) ? p.trim() : "vdo"; // default to VDO.Ninja for reliability
+  }, [searchParams]);
+
   useEffect(() => {
     setRoomInput(room);
   }, [room]);
@@ -26,7 +31,7 @@ function ConsultationRoomInner() {
   function joinRoom() {
     const r = (roomInput || "").trim();
     if (!r) return;
-    router.replace(`/student/consultation?room=${encodeURIComponent(r)}&role=${encodeURIComponent(role)}`);
+    router.replace(`/student/consultation?room=${encodeURIComponent(r)}&role=${encodeURIComponent(role)}&provider=${encodeURIComponent(provider)}`);
   }
 
   // Initialize Jitsi via External API for more reliable embedding
@@ -34,45 +39,59 @@ function ConsultationRoomInner() {
     const container = document.getElementById("jitsi-container");
     if (!container) return;
 
-    function init() {
-      try {
-        // Dispose previous instance if any
-        if (apiRef.current) {
-          try { apiRef.current.dispose(); } catch {}
-          apiRef.current = null;
-        }
-        const domain = "meet.jit.si";
-        const options = {
-          roomName: room,
-          parentNode: container,
-          configOverwrite: {
-            prejoinPageEnabled: true,
-            enableLobby: false,
-            disableDeepLinking: true,
-          },
-          interfaceConfigOverwrite: {
-            LOBBY_BUTTON_ENABLED: false,
-          },
-          userInfo: {
-            displayName: role === "doctor" ? "Doctor" : "Patient",
-          },
-        };
-        // @ts-ignore
-        const api = new window.JitsiMeetExternalAPI(domain, options);
-        apiRef.current = api;
-      } catch (e) {
-        console.error("Failed to init Jitsi", e);
-      }
-    }
+    // Clear container
+    container.innerHTML = "";
 
-    if (typeof window !== "undefined" && !window.JitsiMeetExternalAPI) {
-      const s = document.createElement("script");
-      s.src = "https://meet.jit.si/external_api.js";
-      s.async = true;
-      s.onload = init;
-      document.body.appendChild(s);
+    if (provider === "jitsi") {
+      function init() {
+        try {
+          if (apiRef.current) {
+            try { apiRef.current.dispose(); } catch {}
+            apiRef.current = null;
+          }
+          const domain = "meet.jit.si";
+          const options = {
+            roomName: room,
+            parentNode: container,
+            configOverwrite: {
+              prejoinPageEnabled: true,
+              enableLobby: false,
+              disableDeepLinking: true,
+            },
+            interfaceConfigOverwrite: {
+              LOBBY_BUTTON_ENABLED: false,
+            },
+            userInfo: {
+              displayName: role === "doctor" ? "Doctor" : "Patient",
+            },
+          };
+          // @ts-ignore
+          const api = new window.JitsiMeetExternalAPI(domain, options);
+          apiRef.current = api;
+        } catch (e) {
+          console.error("Failed to init Jitsi", e);
+        }
+      }
+
+      if (typeof window !== "undefined" && !window.JitsiMeetExternalAPI) {
+        const s = document.createElement("script");
+        s.src = "https://meet.jit.si/external_api.js";
+        s.async = true;
+        s.onload = init;
+        document.body.appendChild(s);
+      } else {
+        init();
+      }
     } else {
-      init();
+      // VDO.Ninja embed (no account required)
+      const iframe = document.createElement("iframe");
+      iframe.title = "VDO.Ninja Meeting";
+      iframe.src = `https://vdo.ninja/?room=${encodeURIComponent(room)}&webcam&nopreview&push&showhost=1`;
+      iframe.allow = "camera; microphone; fullscreen; display-capture; clipboard-read; clipboard-write";
+      iframe.style.width = "100%";
+      iframe.style.height = "100%";
+      iframe.style.border = "0";
+      container.appendChild(iframe);
     }
 
     return () => {
@@ -81,7 +100,7 @@ function ConsultationRoomInner() {
         apiRef.current = null;
       }
     };
-  }, [room, role]);
+  }, [room, role, provider]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-50 to-white">
@@ -109,7 +128,7 @@ function ConsultationRoomInner() {
         </div>
 
         <div className="mt-6 overflow-hidden rounded-2xl border border-zinc-200 bg-white">
-          <div className="border-b border-zinc-200 px-5 py-3 text-sm text-zinc-600">Room: <span className="font-medium text-zinc-900">{room}</span></div>
+          <div className="border-b border-zinc-200 px-5 py-3 text-sm text-zinc-600">Room: <span className="font-medium text-zinc-900">{room}</span> • Provider: <span className="font-mono">{provider}</span></div>
           <div id="jitsi-container" className="h-[72vh] w-full" />
         </div>
       </div>

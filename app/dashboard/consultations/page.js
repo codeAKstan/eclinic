@@ -181,7 +181,7 @@ export default function ConsultationsPage() {
                           {ap.mode === "online" && (
                             <button
                               className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
-                              onClick={() => router.push(`/student/consultation?room=eclinic-${ap.id}&role=user`)}
+                              onClick={() => router.push(`/student/consultation?room=eclinic-${ap.id}&role=user&provider=vdo`)}
                               disabled={!canJoin}
                               title={canJoin ? "Join meeting" : "Available on meeting day when approved"}
                             >

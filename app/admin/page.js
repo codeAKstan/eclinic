@@ -229,7 +229,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-3">
               <h2 className="text-sm font-semibold text-zinc-900">User Management</h2>
               <div className="flex items-center gap-2">
-                <button onClick={() => (window.location.href = '/admin/add-doctor')} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs text-white shadow hover:bg-emerald-700">+ Add User</button>
+                <button onClick={() => (window.location.href = '/admin/add-doctor')} className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs text-white shadow hover:bg-emerald-700">+ Add Doctors</button>
                 <button onClick={() => (window.location.href = '/admin/manage-users')} className="rounded-lg border border-zinc-200 px-3 py-1.5 text-xs text-zinc-700 hover:bg-zinc-50">Manage Users</button>
               </div>
             </div>

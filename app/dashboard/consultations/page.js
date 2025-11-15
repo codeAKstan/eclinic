@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import UserTopbar from "../../components/UserTopbar";
 import UserSidebar from "../../components/UserSidebar";
-import { Home, Calendar, FileText, MessageSquare, CreditCard, UserRound, Video, CheckCircle } from "lucide-react";
+import { Home, Calendar, FileText, MessageSquare, CreditCard, UserRound, Video, CheckCircle, Package } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function ConsultationsPage() {
@@ -46,6 +46,7 @@ export default function ConsultationsPage() {
     { label: "Consultations", icon: MessageSquare, href: "/dashboard/consultations" },
     { label: "Medical Records", icon: FileText, href: "/dashboard/medical-records" },
     { label: "Card", icon: CreditCard, href: "/dashboard/card" },
+    { label: "Inventory", icon: Package, href: "/dashboard/inventory" },
     // { label: "Profile", icon: UserRound, href: "/dashboard#profile" },
   ];
 

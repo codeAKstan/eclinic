@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import UserTopbar from "../../components/UserTopbar";
 import UserSidebar from "../../components/UserSidebar";
-import { Home, Calendar, FileText, MessageSquare, CreditCard, Plus } from "lucide-react";
+import { Home, Calendar, FileText, MessageSquare, CreditCard, Plus, Package } from "lucide-react";
 
 export default function UserCardPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -22,6 +22,7 @@ export default function UserCardPage() {
     { label: "Medical Records", icon: FileText, href: "/dashboard#records" },
     { label: "Consultations", icon: MessageSquare, href: "/dashboard/consultations" },
     { label: "Get Card", icon: CreditCard, href: "/dashboard/card" },
+    { label: "Inventory", icon: Package, href: "/dashboard/inventory" },
   ]), []);
 
   useEffect(() => {

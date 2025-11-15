@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import UserTopbar from "../../components/UserTopbar";
 import UserSidebar from "../../components/UserSidebar";
-import { Home, Calendar, FileText, MessageSquare, CreditCard, UserRound } from "lucide-react";
+import { Home, Calendar, FileText, MessageSquare, CreditCard, UserRound, Package } from "lucide-react";
 
 export default function AppointmentsPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -52,6 +52,7 @@ export default function AppointmentsPage() {
     { label: "Medical Records", icon: FileText, href: "/dashboard/medical-records" },
     { label: "Consultations", icon: MessageSquare, href: "/dashboard/consultations" },
     { label: "Get Card", icon: CreditCard, href: "/dashboard/card" },
+    { label: "Inventory", icon: Package, href: "/dashboard/inventory" },
   ];
 
   function openBookingModal(doctorId) {

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import UserTopbar from "../../components/UserTopbar";
 import UserSidebar from "../../components/UserSidebar";
-import { Home, Calendar, FileText, MessageSquare, Star, CreditCard, ClipboardList } from "lucide-react";
+import { Home, Calendar, FileText, MessageSquare, Star, CreditCard, ClipboardList, Package } from "lucide-react";
 
 export default function MedicalRecordsPage() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -44,6 +44,7 @@ export default function MedicalRecordsPage() {
     { label: "Medical Records", icon: FileText, href: "/dashboard/medical-records" },
     { label: "Consultations", icon: MessageSquare, href: "/dashboard/consultations" },
     { label: "Get Card", icon: CreditCard, href: "/dashboard/card" },
+    { label: "Inventory", icon: Package, href: "/dashboard/inventory" },
   ];
 
   async function saveVitals() {

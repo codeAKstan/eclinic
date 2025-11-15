@@ -144,7 +144,7 @@ export default function DoctorConsultationsPage() {
                               className="inline-flex items-center gap-2 rounded-lg border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 hover:bg-zinc-50 disabled:opacity-50"
                               disabled={!canStart}
                               title={canStart ? "Start consultation" : "Available on meeting day when approved"}
-                              onClick={() => router.push(`/student/consultation?room=eclinic-${ap.id}`)}
+                              onClick={() => router.push(`/student/consultation?room=eclinic-${ap.id}&role=doctor`)}
                             >
                               <Video className="h-4 w-4 text-blue-600" /> Start Consultation
                             </button>

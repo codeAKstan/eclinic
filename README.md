@@ -1,36 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# E-Clinic
 
-## Getting Started
+A modern telemedicine web app built with Next.js that supports patient, doctor, and admin workflows: appointments, online video consultations, medical records, inventory, notifications, and more.
 
-First, run the development server:
+## Features
+- Patient dashboard for appointments, consultations, records, card, and inventory
+- Doctor dashboard for managing patients and consultations
+- Admin dashboard for users, doctors, appointments, and inventory
+- Secure authentication with JWT (HttpOnly cookie)
+- Email notifications via Gmail (Nodemailer)
+- Video calls using VDO.Ninja (default) or Jitsi Meet
+- MongoDB storage via Mongoose
+- Tailwind CSS v4 UI with lucide icons
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack
+- Next.js 16 (App Router), React 19
+- Tailwind CSS v4
+- MongoDB + Mongoose
+- Auth: `jose` (JWT), `bcryptjs`
+- Email: `nodemailer`
+- Storage: `@vercel/blob`
+- Icons: `lucide-react`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Quick Start
+### Prerequisites
+- Node.js 18 or newer
+- A MongoDB instance (Atlas or self-hosted)
+- SMTP credentials (Gmail recommended; app password required)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Setup
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Create a `.env` file in the project root with:
+   ```bash
+   MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority
+   JWT_SECRET=replace-with-strong-secret
+   EMAIL_USER=your@gmail.com
+   EMAIL_PASS=your-gmail-app-password
+   NEXT_PUBLIC_APP_URL=http://localhost:3000
+   ```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
+4. Build and run production locally:
+   ```bash
+   npm run build
+   npm run start
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Video Consultations
+- Default provider: VDO.Ninja is embedded client-side via iframe.
+- Alternate provider: Jitsi Meet using `https://meet.jit.si/external_api.js`.
+- Entry points:
+  - Patient: Dashboard → Consultations → Join (`provider=vdo` by default)
+  - Doctor: Doctor Dashboard → Consultations → Start (`provider=vdo`)
+- You can switch provider by adding `provider=jitsi` in the consultation URL, e.g.:
+  - `/student/consultation?room=<code>&role=user&provider=jitsi`
 
-## Learn More
+## API Routes
+Key endpoints under `app/api/`:
+- `login` and `logout` for auth
+- `signup` for patient registration (sends welcome email)
+- `appointments` for scheduling and listing
+- `consultations` for online session metadata
+- `doctor` and `doctors` for doctor data
+- `patients/[id]` for patient detail
+- `medical-records` for records
+- `inventory` for medicines
+- `notifications` for user notifications
+- `feedback` to submit session feedback
+- `me` to fetch current user profile
 
-To learn more about Next.js, take a look at the following resources:
+## Project Structure
+- `app/` Next.js App Router pages and components
+- `app/components/` shared UI (topbars, sidebars, sections)
+- `app/api/` route handlers (server)
+- `lib/` utilities (`mongodb.js`, `auth.js`)
+- `models/` Mongoose schemas (`User`, `Appointment`, `Medicine`, `Notification`)
+- `app/globals.css` Tailwind v4 styles
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Configuration Notes
+- JWT is set as an HttpOnly, `SameSite=strict` cookie; set `JWT_SECRET` in production
+- Gmail requires an app password for `EMAIL_PASS` if 2FA is enabled
+- `MONGODB_URI` must be provided at runtime; the app will throw if missing
+- Set `NEXT_PUBLIC_APP_URL` to your deployed URL for correct links in emails
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Deployment
+- Any Node.js host: build with `npm run build` and serve with `npm run start`
+- Ensure environment variables are configured on the host
+- Use HTTPS in production for secure cookies and camera/microphone permissions
 
-## Deploy on Vercel
+## Troubleshooting
+- Missing `MONGODB_URI`: the server will crash on startup; add to `.env`
+- Email errors: verify Gmail app password and allow SMTP; check `EMAIL_USER`/`EMAIL_PASS`
+- Video calls blocked: browsers require HTTPS and user permissions for camera/mic
+- JWT issues: check cookie domain/secure flags and `JWT_SECRET` consistency
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## License
+- Proprietary or TBD. Add a license if needed.
